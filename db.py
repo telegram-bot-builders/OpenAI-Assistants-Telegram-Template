@@ -34,11 +34,15 @@ class Database:
             collection.delete_many({})  # Clear existing documents
 
             # Prepare the documents to be inserted
-            documents = df['Profile URL'].apply(lambda url: {
-                'profile_url': url,
+            documents = df.apply(lambda row: {
+                'profile_url': row['profileUrl'],
+                'firstName': row['firstName'],
+                'lastName': row['lastName'],
+                'headline': row['headline'],
+                'location': row['location'],
                 'has_been_engaged_with': False,
                 'last_post_engaged_with_url': None
-            }).to_list()
+            }, axis=1).to_list()
 
             # Insert the documents into the collection
             collection.insert_many(documents)
@@ -64,7 +68,8 @@ if __name__ == '__main__':
     try:
         _db.client.admin.command('ping')
         print("Pinged your deployment. You successfully connected to MongoDB!")
-        print(_db.get_all_users())
+        # upload a new community with the command below
+        # _db.upload_new_community('linkedin-people-search-scraper.csv', 'Github_In_Profile')
     except Exception as e:
         print(e)
         pass
