@@ -10,7 +10,7 @@ class Database:
     def __init__(self, database, table):
         self.database = database
         self.table = table
-        self.user_table = "Users"
+        self.user_table = database
         self.client = self._connect_to_server()
         self.collection = self._connect_to_database()
 
@@ -21,7 +21,7 @@ class Database:
         return MongoClient(uri, server_api=ServerApi('1'))
     
     def _connect_to_database(self):
-        db = self.client[self.user_table]
+        db = self.client[self.database]
         return db[self.table]
 
     def upload_new_community(self, csv_file_path, collection_name):
@@ -59,8 +59,6 @@ class Database:
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
 
-    
-            
 
 _db = Database("Communities", "Github_In_Profile")
 

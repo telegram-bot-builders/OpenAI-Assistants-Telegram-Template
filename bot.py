@@ -7,7 +7,7 @@ from telegram.ext import (
     CallbackQueryHandler, ContextTypes, ConversationHandler
 )
 from dotenv import load_dotenv
-from db import _db
+from db import Database
 import openai
 import json
 
@@ -27,15 +27,14 @@ class LinkedInBot:
         self.current_profile_index = 0
         self.profiles = []
         self.comment_flag = False
-        # Connect to the MongoDB database
-        self.db = _db
+        # Connect to the MongoDB collection
+        self.collection = Database('Communities', 'Github_In_Profile').collection
 
         self.setup_handlers()
 
     def setup_handlers(self):
         self.application.add_handler(CommandHandler('start', self.start))
         self.application.add_handler(CommandHandler('help', self.help))
-        self.application.add_handler(CommandHandler('load', self.load_target_audience))
         self.application.add_handler(CommandHandler('engage', self.engage))
         self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_text))
 
@@ -44,7 +43,7 @@ class LinkedInBot:
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         message = (
             "Welcome to the LinkedIn Engagement Bot!\n"
-            "Use /help to see available commands."
+            "Run /engage to begin engaging with your leads."
         )
         await update.message.reply_text(message)
 
@@ -52,30 +51,22 @@ class LinkedInBot:
         message = (
             "/start - Start the bot\n"
             "/help - List of commands\n"
-            "/load - Load new target audience from an Excel file\n"
             "/engage - Engage with loaded profiles"
         )
         await update.message.reply_text(message)
 
-    async def load_target_audience(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        if update.message.document:
-            file = await context.bot.get_file(update.message.document.file_id)
-            file_path = file.file_path
-            df = pd.read_excel(file_path)
-            profiles = df['Profile URL'].tolist()
-            self.db.profiles.insert_many([{'url': url} for url in profiles])
-            self.target_audience_loaded = True
-            await update.message.reply_text("Target audience loaded successfully.")
-        else:
-            await update.message.reply_text("Please upload an Excel file containing LinkedIn profile URLs.")
 
     async def engage(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        if not self.target_audience_loaded:
-            await update.message.reply_text("No target audience loaded. Use /load to load profiles first.")
+
+        collection = self.collection
+        if collection is None:
+            await update.message.reply_text("Failed to retrieve profiles from the database.")
             return
 
-        self.profiles = list(self.db.profiles.find())
+        self.profiles = list(collection.find().limit(20))
         self.current_profile_index = 0
+        self.current_post_index = 0
+
         await self.show_profile(update, context)
 
     async def show_profile(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -86,10 +77,16 @@ class LinkedInBot:
             [InlineKeyboardButton("Switch Lead", callback_data='switch_lead')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text(
-            f"Profile URL: {profile['url']}",
-            reply_markup=reply_markup
-        )
+        if update.message:
+            await update.message.reply_text(
+                f"Profile URL: {profile['profile_url'].split('?')[0]}",
+                reply_markup=reply_markup
+            )
+        else:
+            await update.callback_query.message.edit_text(
+                f"Profile URL: {profile['profile_url'].split('?')[0]}",
+                reply_markup=reply_markup
+            )
 
     async def handle_buttons(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         query = update.callback_query
