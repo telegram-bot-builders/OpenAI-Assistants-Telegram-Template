@@ -7,6 +7,7 @@ from telegram.ext import (
     CallbackQueryHandler, ContextTypes, ConversationHandler
 )
 from dotenv import load_dotenv
+from db import _db
 import openai
 import json
 
@@ -26,11 +27,8 @@ class LinkedInBot:
         self.current_profile_index = 0
         self.profiles = []
         self.comment_flag = False
-
-
-
-        self.mongo_client = pymongo.MongoClient(os.getenv("MONGODB_URI"))
-        self.db = self.mongo_client[os.getenv("MONGODB_DATABASE")]
+        # Connect to the MongoDB database
+        self.db = _db
 
         self.setup_handlers()
 
