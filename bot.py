@@ -80,15 +80,19 @@ class LinkedInBot:
         if update.message:
             await update.message.reply_text(
                 f"{profile['firstName']} {profile['lastName']}" + "\n" +
+                f"Location: {profile['location']}" + "\n" +
                 f"{profile['headline']}" + "\n" +
-                f"Profile URL: \n{profile['profile_url'].split('?')[0]}",
+                f"Profile URL: \n{profile['profile_url'].split('?')[0]}" + "\n" +
+                f"\nPost: \nPost Content",
                 reply_markup=reply_markup
             )
         else:
             await update.callback_query.message.edit_text(
                 f"{profile['firstName']} {profile['lastName']}" + "\n" +
+                f"Location: {profile['location']}" + "\n" +
                 f"{profile['headline']}" + "\n" +
-                f"Profile URL: \n{profile['profile_url'].split('?')[0]}",
+                f"Profile URL: \n{profile['profile_url'].split('?')[0]}" + "\n" +
+                f"\nPost: \nPost Content",
                 reply_markup=reply_markup
             )
 
