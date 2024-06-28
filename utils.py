@@ -30,5 +30,5 @@ def clean_linkedin_data(file_path):
 
 # Example usage:
 if __name__ == '__main__':
-    file_path = 'linkedin-people-search-scraper.csv'
+    file_path = 'linkedin-people-search-scraper_5.csv'
     clean_linkedin_data(file_path)

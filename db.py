@@ -69,7 +69,7 @@ if __name__ == '__main__':
         _db.client.admin.command('ping')
         print("Pinged your deployment. You successfully connected to MongoDB!")
         # upload a new community with the command below
-        # _db.upload_new_community('linkedin-people-search-scraper.csv', 'Github_In_Profile')
+        _db.upload_new_community('linkedin-people-search-scraper_5.csv', 'Github_In_Profile')
     except Exception as e:
         print(e)
         pass
