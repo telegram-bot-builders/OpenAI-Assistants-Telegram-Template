@@ -79,12 +79,16 @@ class LinkedInBot:
         reply_markup = InlineKeyboardMarkup(keyboard)
         if update.message:
             await update.message.reply_text(
-                f"Profile URL: {profile['profile_url'].split('?')[0]}",
+                f"{profile['firstName']} {profile['lastName']}" + "\n" +
+                f"{profile['headline']}" + "\n" +
+                f"Profile URL: \n{profile['profile_url'].split('?')[0]}",
                 reply_markup=reply_markup
             )
         else:
             await update.callback_query.message.edit_text(
-                f"Profile URL: {profile['profile_url'].split('?')[0]}",
+                f"{profile['firstName']} {profile['lastName']}" + "\n" +
+                f"{profile['headline']}" + "\n" +
+                f"Profile URL: \n{profile['profile_url'].split('?')[0]}",
                 reply_markup=reply_markup
             )
 
