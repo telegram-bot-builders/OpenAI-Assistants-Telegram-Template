@@ -140,7 +140,7 @@ class LinkedInBot:
             # Use the LinkedIn scraper to load the recent posts of the current profile
             data_id = run_linkedin_scraper(self.profiles[self.current_profile_index]['profile_url'])
             # save the data_id to the profile
-            if self.database.add_recent_posts_apify_key_to_lead(self.profiles[self.current_profile_index]['profile_url'].split("?")[0], data_id):
+            if self.database.add_recent_posts_apify_key_to_lead(self.profiles[self.current_profile_index]['profile_url'], data_id):
                 await query.message.reply_text("We have initiated a bot to scrape the LinkedIn Profile.")
                 time.sleep(2)
                 await query.message.reply_text("Scraping posts...")
