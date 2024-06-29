@@ -59,6 +59,26 @@ class Database:
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
 
+    # method that finds a document in the collection by the profile_url, and adds a list of recent posts
+    def add_recent_posts_to_lead(self, profile_url, recent_posts):
+        # Find the document by the profile_url using error handling
+        try:
+            document = self.collection.find_one({'profile_url': profile_url})
+            if document is None:
+                raise ValueError(f"Error: No document found with the profile_url '{profile_url}'.")
+
+            # Update the document with the recent posts
+            self.collection.update_one({'profile_url': profile_url}, {'$set': {'recent_posts': recent_posts}})
+            print(f"Added recent posts to the document with the profile_url '{profile_url}'.")
+            return True
+
+        except pymongo.errors.PyMongoError as e:
+            print(f"Error: An error occurred while interacting with MongoDB: {e}")
+            return False
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return False
+
 
 _db = Database("Communities", "Github_In_Profile")
 

@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-import os, requests
+import os, requests, json
 import pprint
 load_dotenv()
 
@@ -7,11 +7,7 @@ APIFY_API_KEY = os.getenv("APIFY_API_KEY")
 ACTOR_RUN_URL = f"https://api.apify.com/v2/acts/kfiWbq3boy3dWKbiL/runs?token={APIFY_API_KEY}"
 
 
-
-print("Client initialized")
-
 # read in cookie from cookie.json
-import json
 with open("cookie.json") as f:
     cookie = json.load(f)
 
