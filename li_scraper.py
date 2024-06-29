@@ -8,6 +8,7 @@ ACTOR_RUN_URL = f"https://api.apify.com/v2/acts/kfiWbq3boy3dWKbiL/runs?token={AP
 
 def run_linkedin_scraper(profile_url):
     print("Running LinkedIn Scraper")
+    print("Profile URL: ", profile_url)
     # read in cookie from cookie.json
     with open("cookie.json") as f:
         cookie = json.load(f)
