@@ -8,8 +8,10 @@ from telegram.ext import (
 )
 from dotenv import load_dotenv
 from db import Database
+from li_scraper import run_linkedin_scraper, get_run_results
 import openai
-import json
+import json, time
+
 
 # Load environment variables
 load_dotenv()
@@ -23,12 +25,15 @@ START_PAGE, END_PAGE, ENGAGE, COMMENT = range(4)
 class LinkedInBot:
     def __init__(self):
         self.application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
+        print("Bot initialized.")
         self.target_audience_loaded = False
         self.current_profile_index = 0
         self.profiles = []
+        self.current_posts = []
         self.comment_flag = False
+        self.database = Database('Communities', 'Github_In_Profile')
         # Connect to the MongoDB collection
-        self.collection = Database('Communities', 'Github_In_Profile').collection
+        self.collection = self.database.collection
 
         self.setup_handlers()
 
@@ -72,18 +77,24 @@ class LinkedInBot:
     async def show_profile(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         profile = self.profiles[self.current_profile_index]
         keyboard = [
-            [InlineKeyboardButton("Prev", callback_data='prev'), InlineKeyboardButton("Next", callback_data='next')],
+            [InlineKeyboardButton("Scrape Posts", callback_data='scrape_posts')],
+            [InlineKeyboardButton("Prev Post", callback_data='prev'), InlineKeyboardButton("Next Post", callback_data='switch_lead')],
             [InlineKeyboardButton("Create Comment and Like", callback_data='comment_like')],
-            [InlineKeyboardButton("Switch Lead", callback_data='switch_lead')]
+            [InlineKeyboardButton("Switch Lead", callback_data='next')]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
+        post_content = "No posts scraped yet."
+        if 'recent_posts_apify_key' in profile:
+            self.current_posts = get_run_results(profile['recent_posts_apify_key'])
+            if len(self.current_posts) > 0:
+                post_content = f"Posted {self.current_posts[0]['timeSincePosted']}: \n{self.current_posts[0]['text']}\n\nURL: \n{self.current_posts[0]['url']}"
         if update.message:
             await update.message.reply_text(
                 f"{profile['firstName']} {profile['lastName']}" + "\n" +
                 f"Location: {profile['location']}" + "\n" +
                 f"{profile['headline']}" + "\n" +
                 f"Profile URL: \n{profile['profile_url'].split('?')[0]}" + "\n" +
-                f"\nPost: \nPost Content",
+                f"\POST: \n{post_content}",
                 reply_markup=reply_markup
             )
         else:
@@ -92,7 +103,7 @@ class LinkedInBot:
                 f"Location: {profile['location']}" + "\n" +
                 f"{profile['headline']}" + "\n" +
                 f"Profile URL: \n{profile['profile_url'].split('?')[0]}" + "\n" +
-                f"\nPost: \nPost Content",
+                f"\POST: \n{post_content}",
                 reply_markup=reply_markup
             )
 
@@ -104,6 +115,20 @@ class LinkedInBot:
             self.current_profile_index = max(0, self.current_profile_index - 1)
         elif query.data == 'next':
             self.current_profile_index = min(len(self.profiles) - 1, self.current_profile_index + 1)
+        elif query.data == 'scrape_posts':
+            lead_info = self.database.find_lead_by_profile_url(self.profiles[self.current_profile_index]['profile_url'])
+            if 'recent_posts_apify_key' in lead_info:
+                await query.message.reply_text("Posts already scraped.")
+                return
+            # Use the LinkedIn scraper to load the recent posts of the current profile
+            data_id = run_linkedin_scraper(self.profiles[self.current_profile_index]['profile_url'])
+            # save the data_id to the profile
+            if self.database.add_recent_posts_apify_key_to_lead(self.profiles[self.current_profile_index]['profile_url'].split("?")[0], data_id):
+                await query.message.reply_text("We have initiated a bot to scrape the LinkedIn Profile.")
+                time.sleep(2)
+                await query.message.reply_text("Scraping posts...")
+            else:
+                await query.message.reply_text("Failed to scrape posts.")
         elif query.data == 'comment_like':
             self.comment_flag = True
             await query.message.reply_text("Please write your comment.")
