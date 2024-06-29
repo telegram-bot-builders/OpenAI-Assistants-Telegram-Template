@@ -107,10 +107,4 @@ if __name__ == "__main__":
     analysis = create_new_thread_and_run_initial_analysis(assistant_id, lead_name, lead_loc, lead_headline, time_since_posted, post_text)
     print(analysis)
 
-    # thread_id = "thread_lJ09rn9WvpLsHf6us2uaQb7B"
-    # messages = list_messages_in_thread(thread_id)
-
-    # message = messages[0].content[0].text.value
-
-    # print(message)
     
