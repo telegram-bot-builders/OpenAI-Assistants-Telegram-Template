@@ -1,5 +1,6 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+import pymongo
 import pandas as pd
 from dotenv import load_dotenv
 import os
@@ -93,6 +94,25 @@ class Database:
         except Exception as e:
             print(f"An unexpected error occurred: {e}")
             return None
+        
+    # method that finds a document in the collection by the profile_url and updates the has_been_engaged_with to True
+    def update_lead_engagement_status(self, profile_url, status=True):
+        try:
+            document = self.collection.find_one({'profile_url': profile_url})
+            if document is None:
+                raise ValueError(f"Error: No document found with the profile_url '{profile_url}'.")
+
+            # Update the document with the recent posts
+            self.collection.update_one({'profile_url': profile_url}, {'$set': {'has_been_engaged_with': status}})
+            print(f"Updated the engagement status of the document with the profile_url '{profile_url}'.")
+            return True
+
+        except pymongo.errors.PyMongoError as e:
+            print(f"Error: An error occurred while interacting with MongoDB: {e}")
+            return False
+        except Exception as e:
+            print(f"An unexpected error occurred: {e}")
+            return False
 
 if __name__ == '__main__':
     _db = Database("Communities", "Github_In_Profile")

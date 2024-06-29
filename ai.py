@@ -52,7 +52,19 @@ def run_message_thread(thread_id, agent_id):
         thread_id=thread_id,
         assistant_id=agent_id
     )
-    return run
+    run_status = run.status
+    print(run_status)
+    print(f"Thread ID: {run.thread_id}")
+    message = None
+    while run.status != "completed":
+        print(f'Run Status: {run.status}')
+        if run.status == "incomplete" or run.status == "expired" or run.status == "cancelled":
+            print("Run failed.")
+            return None
+        run = get_run(run.thread_id, run.id)
+        time.sleep(3)
+    message = list_messages_in_thread(run.thread_id)[0].content[0].text.value
+    return message
 
 # get a run
 def get_run(thread_id, run_id):
@@ -87,7 +99,7 @@ def create_new_thread_and_run_initial_analysis(agent_id, lead_name, lead_loc, le
 
 
     message = list_messages_in_thread(run.thread_id)[0].content[0].text.value
-    return message
+    return message, run.thread_id, run.id
 
 
 if __name__ == "__main__":

@@ -9,6 +9,7 @@ from telegram.ext import (
 from dotenv import load_dotenv
 from db import Database
 from li_scraper import run_linkedin_scraper, get_run_results
+from ai import create_new_thread_and_run_initial_analysis, create_message_in_thread, run_message_thread
 import openai
 import json, time
 
@@ -29,9 +30,11 @@ class LinkedInBot:
         self.target_audience_loaded = False
         self.current_profile_index = 0
         self.current_post_index = 0
+        self.current_thread_id = None
+        self.current_run_id = None
         self.profiles = []
         self.current_posts = []
-        self.comment_flag = False
+        self.conversing_with_ai = False
         self.database = Database('Communities', 'Github_In_Profile')
         # Connect to the MongoDB collection
         self.collection = self.database.collection
@@ -69,7 +72,10 @@ class LinkedInBot:
             await update.message.reply_text("Failed to retrieve profiles from the database.")
             return
 
-        self.profiles = list(collection.find().limit(20))
+        # get the profiles but make sure has_been_engaged_with is False and a limit of 20
+        self.profiles = list(collection.find(
+            {'has_been_engaged_with': False}
+        ).limit(20))
         self.current_profile_index = 0
         self.current_post_index = 0
 
@@ -77,13 +83,22 @@ class LinkedInBot:
 
     async def show_profile(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         profile = self.profiles[self.current_profile_index]
-        keyboard = [
-            [InlineKeyboardButton("Scrape Posts", callback_data='scrape_posts')],
-            [InlineKeyboardButton("Prev Post", callback_data='prev_post'), InlineKeyboardButton("Next Post", callback_data='next_post')],
-            [InlineKeyboardButton("Create Comment and Like", callback_data='comment_like')],
-            [InlineKeyboardButton("Prev Lead", callback_data='prev_lead'), InlineKeyboardButton("Next Lead", callback_data='next_lead')],
+        keyboard = []
+        if self.conversing_with_ai:
+            keyboard = [
+                [InlineKeyboardButton("Replied To Post (Tap when true)", callback_data='replied_to_post')],
+                [InlineKeyboardButton("Prev Post", callback_data='prev_post'), InlineKeyboardButton("Next Post", callback_data='next_post')],
+                [InlineKeyboardButton("Redo Analysis", callback_data='engage_with_post')],
+                [InlineKeyboardButton("Prev Lead", callback_data='prev_lead'), InlineKeyboardButton("Next Lead", callback_data='next_lead')],
+            ]
+        else:
+            keyboard = [
+                [InlineKeyboardButton("Scrape Posts", callback_data='scrape_posts')],
+                [InlineKeyboardButton("Prev Post", callback_data='prev_post'), InlineKeyboardButton("Next Post", callback_data='next_post')],
+                [InlineKeyboardButton("Engage With Post", callback_data='engage_with_post')],
+                [InlineKeyboardButton("Prev Lead", callback_data='prev_lead'), InlineKeyboardButton("Next Lead", callback_data='next_lead')],
 
-        ]
+            ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         post_content = "No posts scraped yet."
         if 'recent_posts_apify_key' in profile:
@@ -131,29 +146,54 @@ class LinkedInBot:
                 await query.message.reply_text("Scraping posts...")
             else:
                 await query.message.reply_text("Failed to scrape posts.")
-        elif query.data == 'comment_like':
-            self.comment_flag = True
-            await query.message.reply_text("Please write your comment.")
+        elif query.data == 'engage_with_post':
+            
+            # gather the info for create_new_thread_and_run_initial_analysis
+            lead = self.profiles[self.current_profile_index]
+            post = self.current_posts[self.current_post_index]
+            lead_name = f"{lead['firstName']} {lead['lastName']}"
+            lead_loc = lead['location']
+            lead_headline = lead['headline']
+            time_since_posted = post['timeSincePosted']
+            post_text = post['text']
+            assistant_id = "asst_DwlX0xL0UNIHxwvyjopoZBmx"
+            # create a new thread and run initial analysis
+            message, self.current_thread_id, self.current_run_id = create_new_thread_and_run_initial_analysis(assistant_id, lead_name, lead_loc, lead_headline, time_since_posted, post_text)
+            # set the conversing_with_ai flag to True
+            self.conversing_with_ai = True
+            await query.message.reply_text(message)
         elif query.data == 'prev_lead':
             self.current_profile_index = max(0, self.current_profile_index - 1)
             self.current_post_index = 0
         elif query.data == 'next_lead':
             self.current_profile_index = min(len(self.profiles) - 1, self.current_profile_index + 1)
             self.current_post_index = 0
-
-        await self.show_profile(update, context)
-
+        elif query.data == 'replied_to_post':
+            # update the document in the collection to reflect that the user has replied to a post by the lead
+            update_status = self.database.update_lead_engagement_status(self.profiles[self.current_profile_index]['profile_url'], True)
+            if update_status:
+                await query.message.reply_text("Successfully updated the engagement status.\n\nMoving to the next post by lead...")
+                # reset the conversing_with_ai flag to False and increment the current_post_index
+                self.conversing_with_ai = False
+                self.current_post_index = min(len(self.current_posts) - 1, self.current_post_index + 1)
+                time.sleep(2)
+            else:
+                await query.message.reply_text("Failed to update the engagement status.")
+                time.sleep(2)
+        try:
+            await self.show_profile(update, context)
+        except Exception as e:
+            print(e)
     async def handle_text(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        if self.comment_flag:
+        if self.conversing_with_ai:
             comment_text = update.message.text
             # Use OpenAI API to handle the conversation and submit comments
-            response = openai.Completion.create(
-                engine="text-davinci-003",
-                prompt=f"Comment on the post: {comment_text}",
-                max_tokens=100
-            )
-            await update.message.reply_text(response.choices[0].text.strip())
-            self.comment_flag = False
+            create_message_in_thread(self.current_thread_id, "user", comment_text)
+            assistant_id = "asst_DwlX0xL0UNIHxwvyjopoZBmx"
+            message = run_message_thread(self.current_thread_id, assistant_id)
+            await update.message.reply_text(message)
+            time.sleep(2)
+            await self.show_profile(update, context)
 
     def run(self):
         self.application.run_polling()
