@@ -7,7 +7,7 @@ APIFY_API_KEY = os.getenv("APIFY_API_KEY")
 ACTOR_RUN_URL = f"https://api.apify.com/v2/acts/kfiWbq3boy3dWKbiL/runs?token={APIFY_API_KEY}"
 
 def run_linkedin_scraper(profile_url):
-
+    print("Running LinkedIn Scraper")
     # read in cookie from cookie.json
     with open("cookie.json") as f:
         cookie = json.load(f)
