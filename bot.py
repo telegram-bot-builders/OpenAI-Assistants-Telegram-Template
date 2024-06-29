@@ -28,6 +28,7 @@ class LinkedInBot:
         print("Bot initialized.")
         self.target_audience_loaded = False
         self.current_profile_index = 0
+        self.current_post_index = 0
         self.profiles = []
         self.current_posts = []
         self.comment_flag = False
@@ -78,23 +79,24 @@ class LinkedInBot:
         profile = self.profiles[self.current_profile_index]
         keyboard = [
             [InlineKeyboardButton("Scrape Posts", callback_data='scrape_posts')],
-            [InlineKeyboardButton("Prev Post", callback_data='prev'), InlineKeyboardButton("Next Post", callback_data='switch_lead')],
+            [InlineKeyboardButton("Prev Post", callback_data='prev_post'), InlineKeyboardButton("Next Post", callback_data='next_post')],
             [InlineKeyboardButton("Create Comment and Like", callback_data='comment_like')],
-            [InlineKeyboardButton("Switch Lead", callback_data='next')]
+            [InlineKeyboardButton("Prev Lead", callback_data='prev_lead'), InlineKeyboardButton("Next Lead", callback_data='next_lead')],
+
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         post_content = "No posts scraped yet."
         if 'recent_posts_apify_key' in profile:
             self.current_posts = get_run_results(profile['recent_posts_apify_key'])
             if len(self.current_posts) > 0:
-                post_content = f"Posted {self.current_posts[0]['timeSincePosted']}: \n{self.current_posts[0]['text']}\n\nURL: \n{self.current_posts[0]['url']}"
+                post_content = f"Posted {self.current_posts[self.current_post_index]['timeSincePosted']}: \n{self.current_posts[self.current_post_index]['text']}\n\nURL: \n{self.current_posts[self.current_post_index]['url']}"
         if update.message:
             await update.message.reply_text(
                 f"{profile['firstName']} {profile['lastName']}" + "\n" +
                 f"Location: {profile['location']}" + "\n" +
                 f"{profile['headline']}" + "\n" +
                 f"Profile URL: \n{profile['profile_url'].split('?')[0]}" + "\n" +
-                f"\POST: \n{post_content}",
+                f"\nPOST: \n{post_content}",
                 reply_markup=reply_markup
             )
         else:
@@ -103,7 +105,7 @@ class LinkedInBot:
                 f"Location: {profile['location']}" + "\n" +
                 f"{profile['headline']}" + "\n" +
                 f"Profile URL: \n{profile['profile_url'].split('?')[0]}" + "\n" +
-                f"\POST: \n{post_content}",
+                f"\nPOST: \n{post_content}",
                 reply_markup=reply_markup
             )
 
@@ -111,10 +113,10 @@ class LinkedInBot:
         query = update.callback_query
         await query.answer()
 
-        if query.data == 'prev':
-            self.current_profile_index = max(0, self.current_profile_index - 1)
-        elif query.data == 'next':
-            self.current_profile_index = min(len(self.profiles) - 1, self.current_profile_index + 1)
+        if query.data == 'prev_post':
+            self.current_post_index = max(0, self.current_post_index - 1)
+        elif query.data == 'next_post':
+            self.current_post_index = min(len(self.profiles) - 1, self.current_post_index + 1)
         elif query.data == 'scrape_posts':
             lead_info = self.database.find_lead_by_profile_url(self.profiles[self.current_profile_index]['profile_url'])
             if 'recent_posts_apify_key' in lead_info:
@@ -132,8 +134,12 @@ class LinkedInBot:
         elif query.data == 'comment_like':
             self.comment_flag = True
             await query.message.reply_text("Please write your comment.")
-        elif query.data == 'switch_lead':
-            self.comment_flag = False
+        elif query.data == 'prev_lead':
+            self.current_profile_index = max(0, self.current_profile_index - 1)
+            self.current_post_index = 0
+        elif query.data == 'next_lead':
+            self.current_profile_index = min(len(self.profiles) - 1, self.current_profile_index + 1)
+            self.current_post_index = 0
 
         await self.show_profile(update, context)
 
