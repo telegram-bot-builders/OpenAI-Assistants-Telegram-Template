@@ -35,7 +35,7 @@ class LinkedInBot:
         self.profiles = []
         self.current_posts = []
         self.conversing_with_ai = False
-        self.database = Database('Communities', 'Github_In_Profile')
+        self.database = Database('Communities', 'Tech_Recruiters_Connections')
         # Connect to the MongoDB collection
         self.collection = self.database.collection
 

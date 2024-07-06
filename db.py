@@ -115,13 +115,13 @@ class Database:
             return False
 
 if __name__ == '__main__':
-    _db = Database("Communities", "Github_In_Profile")
+    _db = Database("Communities", "Tech_Recruiters_Connections")
 
     try:
         _db.client.admin.command('ping')
         print("Pinged your deployment. You successfully connected to MongoDB!")
         # upload a new community with the command below
-        _db.upload_new_community('linkedin-people-search-scraper_5.csv', 'Github_In_Profile')
+        _db.upload_new_community('linkedin-technical-recruiters-connections.csv', 'Tech_Recruiters_Connections')
     except Exception as e:
         print(e)
         pass
