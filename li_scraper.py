@@ -4,7 +4,7 @@ import pprint
 load_dotenv()
 
 APIFY_API_KEY = os.getenv("APIFY_API_KEY")
-ACTOR_RUN_URL = f"https://api.apify.com/v2/acts/kfiWbq3boy3dWKbiL/runs?token={APIFY_API_KEY}"
+ACTOR_RUN_URL = f"https://api.apify.com/v2/acts/curious_coder~linkedin-profile-scraper/run-sync?token={APIFY_API_KEY}"
 
 def run_linkedin_scraper(profile_url):
     print("Running LinkedIn Scraper")
@@ -32,7 +32,7 @@ def run_linkedin_scraper(profile_url):
     
 
 def get_run_results(dataset_id):
-    ACTOR_GET_RUN_URL = f"https://api.apify.com/v2/datasets/{dataset_id}/items?token={APIFY_API_KEY}"
+    ACTOR_GET_RUN_URL = f"https://api.apify.com/v2/acts/curious_coder~linkedin-profile-scraper/runs/last/dataset/items?token={APIFY_API_KEY}"
     response = requests.get(ACTOR_GET_RUN_URL)
     data = response.json()
     # data is a list of objects. extract from each object the url, text, timeSincePosted and return that object
