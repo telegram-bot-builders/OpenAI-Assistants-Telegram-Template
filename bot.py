@@ -156,7 +156,7 @@ class LinkedInBot:
             lead_headline = lead['headline']
             time_since_posted = post['timeSincePosted']
             post_text = post['text']
-            assistant_id = "asst_DwlX0xL0UNIHxwvyjopoZBmx"
+            assistant_id = "asst_aCkydg8wjPVbC1TfAiy610Vz"
             # create a new thread and run initial analysis
             message, self.current_thread_id, self.current_run_id = create_new_thread_and_run_initial_analysis(assistant_id, lead_name, lead_loc, lead_headline, time_since_posted, post_text)
             # set the conversing_with_ai flag to True
@@ -189,7 +189,7 @@ class LinkedInBot:
             comment_text = update.message.text
             # Use OpenAI API to handle the conversation and submit comments
             create_message_in_thread(self.current_thread_id, "user", comment_text)
-            assistant_id = "asst_DwlX0xL0UNIHxwvyjopoZBmx"
+            assistant_id = "asst_aCkydg8wjPVbC1TfAiy610Vz"
             message = run_message_thread(self.current_thread_id, assistant_id)
             await update.message.reply_text(message)
             time.sleep(2)
