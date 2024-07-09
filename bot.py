@@ -2,12 +2,14 @@ import os
 import pandas as pd
 import pymongo
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.constants import ParseMode
 from telegram.ext import (
     ApplicationBuilder, CommandHandler, MessageHandler, filters,
     CallbackQueryHandler, ContextTypes, ConversationHandler
 )
 from dotenv import load_dotenv
 from db import Database
+from utils import escape_markdown_v2
 from li_scraper import run_linkedin_scraper, get_run_results
 from ai import create_new_thread_and_run_initial_analysis, create_message_in_thread, run_message_thread
 import openai
@@ -35,7 +37,7 @@ class LinkedInBot:
         self.profiles = []
         self.current_posts = []
         self.conversing_with_ai = False
-        self.database = Database('Communities', 'Luxury_Weddings_ATL_Alpharetta')
+        self.database = Database('Communities', 'Acct_Execs_Connected')
         # Connect to the MongoDB collection
         self.collection = self.database.collection
 
@@ -156,12 +158,12 @@ class LinkedInBot:
             lead_headline = lead['headline']
             time_since_posted = post['timeSincePosted']
             post_text = post['text']
-            assistant_id = "asst_LCyNm6ZcYmR0AqFmS2Y3bcs9"
+            assistant_id = "asst_wkqXfyEb0cArvqZsyumlmvoY"
             # create a new thread and run initial analysis
             message, self.current_thread_id, self.current_run_id = create_new_thread_and_run_initial_analysis(assistant_id, lead_name, lead_loc, lead_headline, time_since_posted, post_text)
             # set the conversing_with_ai flag to True
             self.conversing_with_ai = True
-            await query.message.reply_text(message)
+            await query.message.reply_text(text=f'\n\n{escape_markdown_v2(message)}\n\n', parse_mode=ParseMode.MARKDOWN_V2)
         elif query.data == 'prev_lead':
             self.current_profile_index = max(0, self.current_profile_index - 1)
             self.current_post_index = 0
@@ -189,9 +191,9 @@ class LinkedInBot:
             comment_text = update.message.text
             # Use OpenAI API to handle the conversation and submit comments
             create_message_in_thread(self.current_thread_id, "user", comment_text)
-            assistant_id = "asst_LCyNm6ZcYmR0AqFmS2Y3bcs9"
+            assistant_id = "asst_wkqXfyEb0cArvqZsyumlmvoY"
             message = run_message_thread(self.current_thread_id, assistant_id)
-            await update.message.reply_text(message)
+            await update.message.reply_text(text=f'\n\n{escape_markdown_v2(message)}\n\n', parse_mode=ParseMode.MARKDOWN_V2)
             time.sleep(2)
             await self.show_profile(update, context)
 

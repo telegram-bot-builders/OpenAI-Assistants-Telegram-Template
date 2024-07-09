@@ -4,7 +4,7 @@ import os, time, pprint
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-assistant_id = "asst_LCyNm6ZcYmR0AqFmS2Y3bcs9"
+assistant_id = "asst_wkqXfyEb0cArvqZsyumlmvoY"
 client = OpenAI(api_key=OPENAI_API_KEY)
 analyze_post_prompt_template = """
     Here is info on a LinkedIn lead: 

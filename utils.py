@@ -1,4 +1,5 @@
 import pandas as pd
+import re
 
 def clean_linkedin_data(file_path):
     """
@@ -28,7 +29,24 @@ def clean_linkedin_data(file_path):
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
+
+def escape_markdown_v2(text):
+    # List of characters that need to be escaped in MarkdownV2
+    reserved_characters = r'_[]()>#+-=|{}.!'
+    
+    # Escape each character by preceding it with a backslash
+    return re.sub(r'([{}])'.format(re.escape(reserved_characters)), r'\\\1', text)
+
+
+
+
 # Example usage:
 if __name__ == '__main__':
-    file_path = 'linkedin-people-search-scraper_5.csv'
-    clean_linkedin_data(file_path)
+    # file_path = 'linkedin-people-search-scraper_5.csv'
+    # clean_linkedin_data(file_path)
+
+    # Example usage
+    text = "This is a sentence with reserved characters like * and . and _."
+    escaped_text = escape_markdown_v2(text)
+
+    print(escaped_text)
