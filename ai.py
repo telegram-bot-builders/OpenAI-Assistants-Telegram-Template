@@ -6,18 +6,6 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 assistant_id = "asst_wkqXfyEb0cArvqZsyumlmvoY"
 client = OpenAI(api_key=OPENAI_API_KEY)
-analyze_post_prompt_template = """
-    Here is info on a LinkedIn lead: 
-    <<NAME>> 
-    Location: <<LOCATION>> 
-    <<HEADLINE>>
-    
-    Here is a post created by the lead: 
-    <<TIMESINCEPOSTED>>: 
-    <<POSTTEXT>> 
-    
-    Dissect this post for natural engagement opportunities
-"""
 
 # Get the agent
 def get_agent(agent_id):
@@ -75,13 +63,12 @@ def get_run(thread_id, run_id):
     return run
 
 # create new thread and run initial message
-def create_new_thread_and_run_initial_analysis(agent_id, lead_name, lead_loc, lead_headline, time_since_posted, post_text, role="user"):
-    message = analyze_post_prompt_template.replace("<<NAME>>", lead_name).replace("<<LOCATION>>", lead_loc).replace("<<HEADLINE>>", lead_headline).replace("<<TIMESINCEPOSTED>>", time_since_posted).replace("<<POSTTEXT>>", post_text)
+def create_new_thread_and_run(agent_id, msg_text, role="user"):
     run = client.beta.threads.create_and_run(
         assistant_id=agent_id,
         thread={
             "messages": [
-            {"role": role, "content": message}
+            {"role": role, "content": msg_text}
             ]
         }
     )
@@ -103,20 +90,6 @@ def create_new_thread_and_run_initial_analysis(agent_id, lead_name, lead_loc, le
 
 
 if __name__ == "__main__":
-    agent = get_agent(assistant_id)
-    lead_name = "Rahul Pandey"
-    lead_loc = "Stanford, CA"
-    lead_headline = "Staff Engineer. Building joinTaro.com to help engineers find career success. Taro, Meta, Pinterest, Stanford."
-    time_since_posted = "Posted 3h"
-    post_text = """
-    Apparently, I hit the connection limit on LinkedIn 😭 
-
-    I can't accept invitations to connect now unless I boot an existing connection. Apologies if your connection request has been pending. (Please help me out by adding a message in your request -- I always prioritize those.)
-
-    Is there an easy way to remove my connection with older accounts that may not be active, or are likely bots? I'd love a solution to this, free or paid 🙏🏽
-
-    """
-    analysis = create_new_thread_and_run_initial_analysis(assistant_id, lead_name, lead_loc, lead_headline, time_since_posted, post_text)
-    print(analysis)
+    pass
 
     
