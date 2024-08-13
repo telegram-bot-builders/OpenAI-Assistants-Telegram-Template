@@ -9,7 +9,6 @@ from telegram.ext import (
 )
 from dotenv import load_dotenv
 from db import Database
-from utils import escape_markdown_v2
 from ai import create_new_thread_and_run, create_message_in_thread, run_message_thread
 import openai
 import json, time
@@ -69,7 +68,7 @@ class LinkedInBot:
             # Use OpenAI API to handle the conversation and submit comments
             create_message_in_thread(self.current_thread_id, "user", comment_text)
             message = run_message_thread(self.current_thread_id, assistant_id)
-            await update.message.reply_text(text=f'\n\n{escape_markdown_v2(message)}\n\n', parse_mode=ParseMode.MARKDOWN_V2)
+            await update.message.reply_text(text=f'\n\n{message}\n\n')
             time.sleep(2)
         else:
             msg = update.message.text
