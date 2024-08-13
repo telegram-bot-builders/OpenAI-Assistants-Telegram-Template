@@ -18,7 +18,8 @@ class Database:
     def _connect_to_server(self):
         MONGODB_PWD = os.getenv('MONGODB_PWD')
         MONGODB_USER = os.getenv('MONGODB_USR')
-        uri = f"mongodb+srv://{MONGODB_USER}:{MONGODB_PWD}@cluster0.gzf2exs.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+        MONGO_DB_CLUSTER_CODE = os.getenv('MONGO_DB_CLUSTER_CODE')
+        uri = f"mongodb+srv://{MONGODB_USER}:{MONGODB_PWD}@cluster0.{MONGO_DB_CLUSTER_CODE}.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
         return MongoClient(uri, server_api=ServerApi('1'))
     
     def _connect_to_database(self):
@@ -31,8 +32,6 @@ if __name__ == '__main__':
     try:
         _db.client.admin.command('ping')
         print("Pinged your deployment. You successfully connected to MongoDB!")
-        # upload a new community with the command below
-        _db.upload_new_community('linkedin-account-executives-connections.csv', 'Acct_Execs_Connected')
     except Exception as e:
         print(e)
         pass

@@ -4,7 +4,7 @@ import os, time, pprint
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-assistant_id = "asst_wkqXfyEb0cArvqZsyumlmvoY"
+assistant_id = os.getenv("ASSISTANT_ID")
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 # Get the agent

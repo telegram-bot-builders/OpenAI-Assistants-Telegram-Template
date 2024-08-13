@@ -20,10 +20,8 @@ load_dotenv()
 MONGODB_USR = os.getenv("MONGODB_USR")
 MONGODB_PWD = os.getenv("MONGODB_PWD")
 
-# Constants for conversation states
-START_PAGE, END_PAGE, ENGAGE, COMMENT = range(4)
 
-class LinkedInBot:
+class AIAssistantTeleBot:
     def __init__(self):
         self.application = ApplicationBuilder().token(os.getenv("TELEGRAM_BOT_TOKEN")).build()
         print("Bot initialized.")
@@ -31,9 +29,6 @@ class LinkedInBot:
         self.current_run_id = None
         self.profiles = []
         self.conversing_with_ai = False
-        self.database = Database('Communities', 'Acct_Execs_Connected')
-        # Connect to the MongoDB collection
-        self.collection = self.database.collection
 
         self.setup_handlers()
 
@@ -62,7 +57,7 @@ class LinkedInBot:
         await update.message.reply_text("Begin chatting with AI")
 
     async def handle_text(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        assistant_id = "asst_wkqXfyEb0cArvqZsyumlmvoY"
+        assistant_id = os.getenv("ASSISTANT_ID")
         if self.conversing_with_ai:
             comment_text = update.message.text
             # Use OpenAI API to handle the conversation and submit comments
@@ -85,5 +80,5 @@ class LinkedInBot:
         self.application.run_polling()
 
 if __name__ == '__main__':
-    bot = LinkedInBot()
+    bot = AIAssistantTeleBot()
     bot.run()
