@@ -1,5 +1,7 @@
 # OpenAI Assistants API Template For Telegram
 
+
+
 ## Project Overview
 
 This is **the** Telegram bot template you’ve been looking for. One template, infinite possibilities. 
