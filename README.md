@@ -134,6 +134,90 @@ def setup_handlers(self):
 - Adding new modules lets you keep the codebase organized and modular, making it easier to maintain and scale. Whether you're integrating external APIs, adding new data processing layers, or implementing custom user interaction features, this approach keeps everything clean and manageable.
 
 ---
+### Updates Coming Soon
+
+Exciting updates are on the horizon! We're implementing OpenAI Assistants Function Calling by **8/23/2024**. This will bring even more power and flexibility to your Telegram bot, allowing the AI to execute functions you define directly within your code.
+
+#### What’s Coming:
+
+- **New Files**:
+  - **`assistant_functions.py`**: This file will house the functions that you want your OpenAI assistant to use.
+  - **`openai_schemas.py`**: This file will define the OpenAI function schemas, mapping out how each function should be structured.
+
+**Example:**
+
+- A function like `get_weather(location: str) -> str` could look like this:
+
+  ```python
+  def get_weather(location: str) -> str:
+      return f"The weather is 89 degrees in {location}"
+  ```
+
+- And the corresponding schema in `openai_schemas.py` might look like:
+
+  ```json
+  {
+    "name": "next_move",
+    "description": "Get the next move",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "The action the user is requesting"
+        }
+      },
+      "required": [
+        "action"
+      ]
+    }
+  }
+  ```
+
+#### Updates to `ai.py`:
+
+We’ll also be updating `ai.py` to integrate this new functionality:
+
+- **Function Management**: 
+  - Adding and removing functions from the OpenAI assistant.
+  
+- **Enhanced Messaging Functionality**:
+  - We’ll update the messaging code to handle the `requires_action` state. This will enable your bot to execute functions based on the assistant's requests.
+
+**Example Code Update in `ai.py`:**
+
+```python
+elif run_status.status == 'requires_action':
+    print("Function Calling")
+    required_actions = run_status.required_action.submit_tool_outputs.model_dump()
+    print(required_actions)
+    tool_outputs = []
+    import json
+    for action in required_actions["tool_calls"]:
+        func_name = action['function']['name']
+        arguments = json.loads(action['function']['arguments'])
+        
+        if func_name == "next_move":
+            output = next_move(action=arguments['action'])
+            print(output)
+            tool_outputs.append({
+                "tool_call_id": action['id'],
+                "output": output
+            })
+        else:
+            raise ValueError(f"Unknown function: {func_name}")
+        
+    print("Submitting outputs back to the Assistant...")
+    client.beta.threads.runs.submit_tool_outputs(
+        thread_id=thread.id,
+        run_id=run.id,
+        tool_outputs=tool_outputs
+    )
+```
+
+This update ensures that the bot can dynamically handle function calls, making your AI assistant more interactive and capable of performing specific tasks directly in response to user commands.
+
+Stay tuned! These updates are going to unlock even more potential for your bot, making it a more powerful tool for any market or community you’re targeting.
 ## 1-on-1 Python Tutoring
 
 Looking to master Python, build AI-driven Telegram bots, or just level up your coding skills? 
