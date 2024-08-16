@@ -160,5 +160,5 @@ I specialize in creating AI-driven Telegram bots, automating processes, and turn
 
 Looking for more? Check out these resources to help you get the most out of this template:
 
-- [Weekly Zoom Through MeetUp.com](https://www.meetup.com/market-matrix/) - Work live with others!
+- [MeetUp.com](https://www.meetup.com/market-matrix/) - Weekly Zoom Meet Up!
 
