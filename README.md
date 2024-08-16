@@ -39,7 +39,8 @@ Plug in your ideas, tweak the code, and let the bot do the rest.
 7. update following values in the .env file
    - OPENAI_API_KEY=sk-xxxxxxx
    - TELEGRAM_BOT_TOKEN=xxxxxx
-   - ASSISTANT_ID=xxxxx 
+   - ASSISTANT_ID=xxxxx
+8. start bot -> `python bot.py`
 
 ## How To Extend The Code
 
