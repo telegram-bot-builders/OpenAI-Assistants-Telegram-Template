@@ -162,3 +162,16 @@ Looking for more? Check out these resources to help you get the most out of this
 
 - [MeetUp.com](https://www.meetup.com/market-matrix/) - Weekly Zoom Meet Up!
 
+## Contributing
+
+Contributions are welcome! If you've got ideas, code improvements, or new features to add, feel free to fork the repo and submit a pull request. Let’s make this template even better together!
+
+For major changes, please open an issue first to discuss what you would like to change.
+
+**Fork the repo:** [OpenAI Assistants API Template For Telegram](https://github.com/telegram-bot-builders/OpenAI-Assistants-Telegram-Template)
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](#) file for details.
+
+
