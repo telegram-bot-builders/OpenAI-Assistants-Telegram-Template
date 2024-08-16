@@ -134,3 +134,31 @@ def setup_handlers(self):
 - Adding new modules lets you keep the codebase organized and modular, making it easier to maintain and scale. Whether you're integrating external APIs, adding new data processing layers, or implementing custom user interaction features, this approach keeps everything clean and manageable.
 
 ---
+## 1-on-1 Python Tutoring
+
+Looking to master Python, build AI-driven Telegram bots, or just level up your coding skills? 
+
+I'm here to help!
+
+I offer personalized, 1-on-1 Python tutoring sessions via Telegram. 
+
+Whether you're a beginner or looking to dive deeper into advanced topics, I've got you covered.
+
+**Get in touch:** [@AutoNate](https://t.me/@AutoNate) on Telegram.
+
+Let's get you coding like a pro!
+
+## About the Author
+
+Hey, I'm Nate Baker, a seasoned developer and AI enthusiast with a passion for building innovative solutions. Over the years, I've honed my skills in Python and AI, crafting tools that not only solve problems but also open new possibilities for businesses and individuals alike.
+
+I specialize in creating AI-driven Telegram bots, automating processes, and turning complex problems into manageable, profitable solutions. When I'm not coding, I'm usually sharing my knowledge through tutoring or contributing to open-source projects.
+
+**Connect with me on LinkedIn:** [Nate Baker](https://www.linkedin.com/in/nate-gpt-expert/)
+
+## Additional Resources
+
+Looking for more? Check out these resources to help you get the most out of this template:
+
+- [Weekly Zoom Through MeetUp.com](https://www.meetup.com/market-matrix/) - Work live with others!
+
