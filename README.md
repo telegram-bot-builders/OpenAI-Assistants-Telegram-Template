@@ -1,6 +1,6 @@
 # OpenAI Assistants API Template For Telegram
 
-Please contact (@AutoNate)[https://t.me/@AutoNate]
+Please contact [@AutoNate](https://t.me/@AutoNate)
 
 ## Project Overview
 
