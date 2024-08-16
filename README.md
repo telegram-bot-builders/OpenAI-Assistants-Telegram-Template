@@ -16,9 +16,10 @@ We’ve handled the heavy lifting—AI functions, modular design, easy extension
 4. initiate venv -> Unix: `source env/bin/activate` Windows: `env\Scripts\activate`
 5. install requirements with -> `pip install -r requirements.txt`
 6. create .env file -> `touch .env`
-7. OPENAI_API_KEY=sk-xxxxxxx
-   8. TELEGRAM_BOT_TOKEN=xxxxxx
-   9. ASSISTANT_ID=xxxxx
+7. update following values in the .env file
+   8. \nOPENAI_API_KEY=sk-xxxxxxx
+   9. TELEGRAM_BOT_TOKEN=xxxxxx
+   10. ASSISTANT_ID=xxxxx
 
 # Python Telegram Bot Template With OpenAI Assistants API
 - We follow the same mundane steps when firing up a new Telegram Bot, especially if you include a database and AI connections. This repo allows you to get to your idea quicker by taking care of the boring, yet neccessary, bootstraping of your AI powered Telegram Bot.
