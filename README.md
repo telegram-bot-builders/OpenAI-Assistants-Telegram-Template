@@ -2,7 +2,7 @@
 
 **To build out profitable Telegram Bots with this template, please contact [@AutoNate](https://t.me/@AutoNate).**
 
-You will learn how to read the various markets to quickly discover their patterns and then use ChatGPT to help you configure an automation to help them out. This template serves as your frontend and backend for that automation!
+You will learn how to read various markets to quickly discover their patterns and then use ChatGPT to help you configure an automation to help them out. This template serves as your frontend and backend for that automation!
 
 With Telegram having over 1 billion active users a month, you are essentially bringing the power of AI and automations to the everyday person by learning how to build innovative solutions to their current patterns, and then by easily delivering the solution via the trusted Telegram platform.
 
