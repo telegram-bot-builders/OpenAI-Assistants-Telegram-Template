@@ -1,6 +1,6 @@
 # OpenAI Assistants API Template For Telegram
 
-To build out profitable Telegram Bots with this template, please contact [@AutoNate](https://t.me/@AutoNate). 
+**To build out profitable Telegram Bots with this template, please contact [@AutoNate](https://t.me/@AutoNate).**
 
 You will learn how to read the various markets to quickly discover their patterns and then use ChatGPT to help you configure an automation to help them out. This template serves as your frontend and backend for that automation!
 
