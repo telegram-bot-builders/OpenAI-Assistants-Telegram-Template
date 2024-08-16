@@ -1,3 +1,5 @@
+# OpenAI Assistants API Template For Telegram
+
 ## Project Overview
 
 This is **the** Telegram bot template you’ve been looking for. One template, infinite possibilities. 
@@ -6,7 +8,7 @@ Powered by Python and OpenAI, this setup isn’t just about building bots—it�
 
 We’ve handled the heavy lifting—AI functions, modular design, easy extensions. All you need is creativity. Plug in your ideas, tweak the code, and let the bot do the rest.
 
-# OpenAI Assistants API Template For Telegram
+## Installation Instructions
 
 1. Clone the repo -> `git clone https://github.com/telegram-bot-builders/OpenAI-Assistants-Telegram-Template.git tele-bot`
 2. cd into the newly created directory -> `cd tele-bot`
