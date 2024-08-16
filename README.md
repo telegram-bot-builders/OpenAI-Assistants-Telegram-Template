@@ -157,18 +157,18 @@ Exciting updates are on the horizon! We're implementing OpenAI Assistants Functi
 
   ```json
   {
-    "name": "next_move",
-    "description": "Get the next move",
+    "name": "get_weather",
+    "description": "Gets the weather from the location.",
     "parameters": {
       "type": "object",
       "properties": {
-        "action": {
+        "location": {
           "type": "string",
-          "description": "The action the user is requesting"
+          "description": "The location the user wants the weather for."
         }
       },
       "required": [
-        "action"
+        "location"
       ]
     }
   }
