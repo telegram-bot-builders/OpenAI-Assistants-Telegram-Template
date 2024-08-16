@@ -134,11 +134,11 @@ def setup_handlers(self):
 - Adding new modules lets you keep the codebase organized and modular, making it easier to maintain and scale. Whether you're integrating external APIs, adding new data processing layers, or implementing custom user interaction features, this approach keeps everything clean and manageable.
 
 ---
-### Updates Coming Soon
+## Updates Coming Soon
 
 Exciting updates are on the horizon! We're implementing OpenAI Assistants Function Calling by **8/23/2024**. This will bring even more power and flexibility to your Telegram bot, allowing the AI to execute functions you define directly within your code.
 
-#### What’s Coming:
+### What’s Coming:
 
 - **New Files**:
   - **`assistant_functions.py`**: This file will house the functions that you want your OpenAI assistant to use.
@@ -174,7 +174,7 @@ Exciting updates are on the horizon! We're implementing OpenAI Assistants Functi
   }
   ```
 
-#### Updates to `ai.py`:
+### Updates to `ai.py`:
 
 We’ll also be updating `ai.py` to integrate this new functionality:
 
