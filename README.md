@@ -179,7 +179,7 @@ Exciting updates are on the horizon! We're implementing OpenAI Assistants Functi
 We’ll also be updating `ai.py` to integrate this new functionality:
 
 - **Function Management**: 
-  - Adding and removing functions from the OpenAI assistant.
+  - Methods for adding and removing functions from the OpenAI assistant.
   
 - **Enhanced Messaging Functionality**:
   - We’ll update the messaging code to handle the `requires_action` state. This will enable your bot to execute functions based on the assistant's requests.
