@@ -40,3 +40,5 @@ Plug in your ideas, tweak the code, and let the bot do the rest.
    - OPENAI_API_KEY=sk-xxxxxxx
    - TELEGRAM_BOT_TOKEN=xxxxxx
    - ASSISTANT_ID=xxxxx 
+
+## How To Extend The Code
