@@ -16,7 +16,7 @@ We’ve handled the heavy lifting—AI functions, modular design, easy extension
 4. initiate venv -> Unix: `source env/bin/activate` Windows: `env\Scripts\activate`
 5. install requirements with -> `pip install -r requirements.txt`
 6. create .env file -> `touch .env`
-   7. OPENAI_API_KEY=sk-xxxxxxx
+7. OPENAI_API_KEY=sk-xxxxxxx
    8. TELEGRAM_BOT_TOKEN=xxxxxx
    9. ASSISTANT_ID=xxxxx
 
